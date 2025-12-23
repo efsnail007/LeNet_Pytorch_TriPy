@@ -12,6 +12,21 @@ LINE_RE = re.compile(
     r"val_acc=([0-9]*\.?[0-9]+)\s+"
     r"lr=([0-9]*\.?[0-9]+)\s*$"
 )
+import matplotlib.pyplot as plt
+
+# Глобальные настройки размера шрифтов (поставь свои значения)
+plt.rcParams.update({
+    "font.family": "DejaVu Sans",
+    "axes.unicode_minus": False,
+
+    "font.size": 16,        # базовый размер
+    "axes.titlesize": 18,   # заголовок графика
+    "axes.labelsize": 18,   # подписи осей
+    "xtick.labelsize": 14,  # подписи делений по X
+    "ytick.labelsize": 14,  # подписи делений по Y
+    "legend.fontsize": 18,  # легенда
+})
+plt.legend(loc="best", frameon=True)
 
 @dataclass
 class History:
