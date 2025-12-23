@@ -43,44 +43,47 @@ def parse_training_log(text: str) -> History:
         raise ValueError("Не найдено ни одной строки Epoch [...]. Проверь текст лога.")
     return History(epoch, tr_l, tr_a, va_l, va_a, lr)
 
-def plot_history(h: History, show_lr: bool = False) -> None:
+def plot_history(h, show_lr: bool = False) -> None:
+    # Чтобы кириллица не превращалась в квадратики
+    plt.rcParams["font.family"] = "DejaVu Sans"
+    plt.rcParams["axes.unicode_minus"] = False
+
     # 1) Loss
     plt.figure()
-    plt.plot(h.epoch, h.train_loss, label="train_loss")
-    plt.plot(h.epoch, h.val_loss, label="val_loss")
-    plt.xlabel("Epoch")
-    plt.ylabel("Loss")
-    plt.title("Loss vs Epoch")
+    plt.plot(h.epoch, h.train_loss, label="Потери (обучение)")
+    plt.plot(h.epoch, h.val_loss, label="Потери (валидация)")
+    plt.xlabel("Эпоха")
+    plt.ylabel("Значение функции потерь")
+    plt.title("Изменение функции потерь по эпохам")
     plt.grid(True, alpha=0.3)
     plt.legend()
     plt.tight_layout()
 
     # 2) Accuracy
     plt.figure()
-    plt.plot(h.epoch, h.train_acc, label="train_acc")
-    plt.plot(h.epoch, h.val_acc, label="val_acc")
-    plt.xlabel("Epoch")
-    plt.ylabel("Accuracy")
-    plt.title("Accuracy vs Epoch")
+    plt.plot(h.epoch, h.train_acc, label="Точность (обучение)")
+    plt.plot(h.epoch, h.val_acc, label="Точность (валидация)")
+    plt.xlabel("Эпоха")
+    plt.ylabel("Точность (доля верных ответов)")
+    plt.title("Изменение точности по эпохам")
     plt.grid(True, alpha=0.3)
     plt.legend()
     plt.tight_layout()
 
-    # (необязательно) LR, если хочешь видеть ступеньки scheduler'а
+    # 3) LR (опционально)
     if show_lr:
         plt.figure()
-        plt.plot(h.epoch, h.lr, label="lr")
-        plt.xlabel("Epoch")
-        plt.ylabel("Learning rate")
-        plt.title("LR vs Epoch")
+        plt.plot(h.epoch, h.lr, label="Скорость обучения (LR)")
+        plt.xlabel("Эпоха")
+        plt.ylabel("Скорость обучения")
+        plt.title("Изменение скорости обучения по эпохам")
         plt.grid(True, alpha=0.3)
         plt.legend()
         plt.tight_layout()
 
-    # Короткая сводка
     best_i = max(range(len(h.val_acc)), key=lambda i: h.val_acc[i])
-    print(f"Best val_acc = {h.val_acc[best_i]:.4f} at epoch {h.epoch[best_i]}")
-    print(f"Final    val_acc = {h.val_acc[-1]:.4f} | val_loss = {h.val_loss[-1]:.4f} | lr = {h.lr[-1]:.5f}")
+    print(f"Лучшая точность на валидации = {h.val_acc[best_i]:.4f} (эпоха {h.epoch[best_i]})")
+    print(f"Финал: val_acc = {h.val_acc[-1]:.4f} | val_loss = {h.val_loss[-1]:.4f} | lr = {h.lr[-1]:.5f}")
 
     plt.show()
 
